@@ -7,13 +7,17 @@ function App() {
   const [page, setPage] = useState("List");
   const [questions, setQuestions] = useState([]);
 
-  useEffect(() => {
-    if (page === "List") {
-      fetch("http://localhost:4000/questions")
+  const getQuestions = () => {
+          fetch("http://localhost:4000/questions")
         .then((r) => r.json())
         .then((data) => {
           setQuestions(data);
         });
+  }
+  
+  useEffect(() => {
+    if (page === "List") {
+      getQuestions();
     }
   }, [page]);
 
@@ -30,13 +34,20 @@ function App() {
     }).then(() => setPage("List"));
   };
 
+  const onDelete = (id) => {
+    fetch(`http://localhost:4000/questions/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    }).then(getQuestions);
+  };
+
   return (
     <main>
       <AdminNavBar onChangePage={setPage} />
       {page === "Form" ? (
         <QuestionForm onFormSubmit={onFormSubmit} />
       ) : (
-        <QuestionList questions={questions} />
+        <QuestionList questions={questions} onDelete={onDelete} />
       )}
     </main>
   );
