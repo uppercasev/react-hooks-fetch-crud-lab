@@ -41,13 +41,22 @@ function App() {
     }).then(getQuestions);
   };
 
+  const onSelect = (id, index) => {
+    const patchBody = { correctIndex: index }
+    fetch(`http://localhost:4000/questions/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(patchBody),
+    }).then(getQuestions);
+  };
+
   return (
     <main>
       <AdminNavBar onChangePage={setPage} />
       {page === "Form" ? (
         <QuestionForm onFormSubmit={onFormSubmit} />
       ) : (
-        <QuestionList questions={questions} onDelete={onDelete} />
+        <QuestionList questions={questions} onDelete={onDelete} onSelect={onSelect} />
       )}
     </main>
   );
